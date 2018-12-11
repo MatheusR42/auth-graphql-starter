@@ -5,6 +5,14 @@ import mutation from '../mutations/login';
 import { graphql } from 'react-apollo';
 
 class LoginForm extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            errors: []
+        }
+    }
+
     onSubmit({ email, password }) {
         this.props.mutate({
             variables: {
@@ -13,12 +21,17 @@ class LoginForm extends Component {
             },
             refetchQueries: [{ query }]
         })
+        .catch(res => {
+            const errors = res.graphQLErrors.map(error => error.message);
+            this.setState({ errors });
+        })
     }
 
     render() {
         return (
             <div>
                 <AuthForm 
+                    errors={this.state.errors}
                     onSubmit={this.onSubmit.bind(this)}
                 />
             </div>
