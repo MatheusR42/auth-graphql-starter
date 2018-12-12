@@ -3,6 +3,7 @@ import { graphql } from 'react-apollo';
 import AuthForm from './AuthForm';
 import mutation from '../mutations/sinup';
 import query from '../queries/current-user';
+import { hashHistory } from 'react-router';
 
 class SingupForm extends Component {
     constructor(props) {
@@ -10,6 +11,12 @@ class SingupForm extends Component {
 
         this.state = {
             errors: []
+        }
+    }
+
+    componentWillUpdate(nextProps) {
+        if (!this.props.data.currentUser && nextProps.data.currentUser) {
+            hashHistory.push('/dashboard');
         }
     }
 
@@ -40,4 +47,6 @@ class SingupForm extends Component {
     }
 }
 
-export default graphql(mutation)(SingupForm);
+export default graphql(query)(
+    graphql(mutation)(SingupForm)
+);
